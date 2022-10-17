@@ -24,10 +24,16 @@ function update() {
         ship.x + ship.r * Math.cos(ship.angle),
         ship.y - ship.r * Math.sin(ship.angle)
     );
-    ctx.lineTo(
-        ship.x + ship.r * Math.cos(ship.angle),
-        ship.y + ship.r * Math.sin(ship.angle)
+    ctx.lineTo( //Rear leftx
+        ship.x - ship.r * (Math.cos(ship.angle) + Math.sin(ship.angle)),
+        ship.y + ship.r * (Math.sin(ship.angle) - Math.cos(ship.angle))
     );
+    ctx.lineTo( //Rear right
+        ship.x - ship.r * (Math.cos(ship.angle) - Math.sin(ship.angle)),
+        ship.y + ship.r * (Math.sin(ship.angle) + Math.cos(ship.angle))
+    );
+    ctx.closePath()
+    ctx.stroke();
 
     //Rotate the ship
 
