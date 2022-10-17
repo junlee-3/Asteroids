@@ -33,7 +33,7 @@ function keyDown(/** @type {KeyboardEvent} */ ev) {
     }
 }
 
-function keyUp() {
+function keyUp(/** @type {KeyboardEvent} */ ev) {
     switch(ev.keyCode) {
         case 37: //left arrow
             ship.rot = 0;
