@@ -1,11 +1,14 @@
 const canvas = document.getElementById("canvas");
-const FPS = 60;
-const shipSize = 30;
+const FPS = 60; //How many frames per second the game runs in
+const shipSize = 30; //Size of the ship
 const turnRate = 360; //degrees per second
 const shipThrust = 5; //Acceleration in pixels per second
 const airResistance = 0.7; //Air Resistance or "Friction" or space. 0 = none 1= lots
+const asteroidsNumber = 3; //Starting number of asteroids
+const asteroidsSpeed = 50; //max start speed of asteroids in pixels per second
+const asteroidSize = 100; //Maximum starting size of asteroids in pixels
 let ctx = canvas.getContext("2d");
-const ship = {
+const ship = { //Create ship object
     x: canvas.width / 2,
     y: canvas.height / 2,
     r: shipSize /2,
@@ -17,6 +20,17 @@ const ship = {
         y: 0
     }
 }
+let asteroids = []; //Create asteroids array
+
+function createAsteroidsBelt() {
+    asteroids = [];
+    let x, y;
+    for (let i = 0; i < asteroidsNumber; i++) {
+        x = Math.floor(Math.random() * canvas.width);
+        y = Math.floor(Math.random() * canvas.height);
+        asteroids.push(newAsteroid(x, y));
+    }
+}
 
 //Event Handlers
 document.addEventListener("keydown", keyDown);
@@ -25,6 +39,7 @@ document.addEventListener("keyup", keyUp);
 //Game Loop
 setInterval(update, 1000/FPS);
 
+//Key Down Event to move the player
 function keyDown(/** @type {KeyboardEvent} */ ev) {
     switch(ev.keyCode) {
         case 37: //left arrow
@@ -41,6 +56,7 @@ function keyDown(/** @type {KeyboardEvent} */ ev) {
     }
 }
 
+//Key up events to stop the player
 function keyUp(/** @type {KeyboardEvent} */ ev) {
     switch(ev.keyCode) {
         case 37: //left arrow
@@ -57,12 +73,24 @@ function keyUp(/** @type {KeyboardEvent} */ ev) {
     }
 }
 
+function newAsteroid(x, y) {
+    let asteroid = {
+        x: x,
+        y: y,
+        xv: Math.random() * asteroidsSpeed / FPS * (Math.random() < 0.5 ? 1 : -1),
+        xy: Math.random() * asteroidsSpeed / FPS * (Math.random() < 0.5 ? 1 : -1),
+        r: asteroidSize / 2,
+        a: Math.random() * Math.PI * 2 //In radians
+    }
+    return asteroid;
+}
+
 function update() {
     //Draw Background
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    //Thrust the ship
+    //Thrust the ship/Move it forward
     if(ship.thrusting) {
         ship.thrust.x += shipThrust * Math.cos(ship.angle) / FPS;
         ship.thrust.y -= shipThrust * Math.sin(ship.angle) / FPS;
@@ -110,6 +138,13 @@ function update() {
     );
     ctx.closePath();
     ctx.stroke();
+
+    //Draw the asteroids
+    ctx.strokeStyle = "slategrey";
+    ctx.lineWidth = shipSize / 20;
+    for (let i = 0; i < asteroids.length; i++) {
+        //41:16
+    }
 
     //Rotate the ship
     ship.angle += ship.rotation;
