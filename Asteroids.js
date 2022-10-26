@@ -7,6 +7,7 @@ const airResistance = 0.7; //Air Resistance or "Friction" or space. 0 = none 1= 
 const asteroidsNumber = 3; //Starting number of asteroids
 const asteroidsSpeed = 50; //max start speed of asteroids in pixels per second
 const asteroidSize = 100; //Maximum starting size of asteroids in pixels
+const asteroidsVert = 10; //Average number of vertices on each asteroid.
 let ctx = canvas.getContext("2d");
 const ship = { //Create ship object
     x: canvas.width / 2,
@@ -21,6 +22,14 @@ const ship = { //Create ship object
     }
 }
 let asteroids = []; //Create asteroids array
+createAsteroidsBelt();
+
+//Event Handlers
+document.addEventListener("keydown", keyDown);
+document.addEventListener("keyup", keyUp);
+
+//Game Loop
+setInterval(update, 1000/FPS);
 
 function createAsteroidsBelt() {
     asteroids = [];
@@ -31,13 +40,6 @@ function createAsteroidsBelt() {
         asteroids.push(newAsteroid(x, y));
     }
 }
-
-//Event Handlers
-document.addEventListener("keydown", keyDown);
-document.addEventListener("keyup", keyUp);
-
-//Game Loop
-setInterval(update, 1000/FPS);
 
 //Key Down Event to move the player
 function keyDown(/** @type {KeyboardEvent} */ ev) {
@@ -80,7 +82,8 @@ function newAsteroid(x, y) {
         xv: Math.random() * asteroidsSpeed / FPS * (Math.random() < 0.5 ? 1 : -1),
         xy: Math.random() * asteroidsSpeed / FPS * (Math.random() < 0.5 ? 1 : -1),
         r: asteroidSize / 2,
-        a: Math.random() * Math.PI * 2 //In radians
+        a: Math.random() * Math.PI * 2, //In radians
+        vert: Math.floor(Math.random() * (asteroidsVert + 1) + asteroidsVert / 2)
     }
     return asteroid;
 }
@@ -142,8 +145,35 @@ function update() {
     //Draw the asteroids
     ctx.strokeStyle = "slategrey";
     ctx.lineWidth = shipSize / 20;
+    let x, y, r, a, vert;
     for (let i = 0; i < asteroids.length; i++) {
-        //41:16
+        //Get the properties
+        x = asteroids[i].x;
+        y = asteroids[i].y;
+        r = asteroids[i].r;
+        a = asteroids[i].a;
+        vert = asteroids[i].vert;
+
+        //Draw the path
+        ctx.beginPath();
+        ctx.moveTo(
+            x + r * Math.cos(a),
+            y + r * Math.sin(a)
+        );
+
+        //Draw the polygon
+        for (let j = 0; j < vert; j++) {
+            ctx.lineTo(
+                x + r * Math.cos(a + j * Math.PI * 2 / vert),
+                y + r * Math.sin(a + j * Math.PI * 2 / vert)
+            );
+        }
+        ctx.closePath();
+        ctx.stroke();
+
+        //Move the asteroid
+
+        //Handle edge
     }
 
     //Rotate the ship
