@@ -5,6 +5,7 @@ const turnRate = 360; //degrees per second
 const shipThrust = 5; //Acceleration in pixels per second
 const airResistance = 0.7; //Air Resistance or "Friction" or space. 0 = none 1= lots
 const asteroidsNumber = 3; //Starting number of asteroids
+const asteroidsJagged = 0.4; //Jaggedness of the asteroids (= none 1 = lots)
 const asteroidsSpeed = 50; //max start speed of asteroids in pixels per second
 const asteroidSize = 100; //Maximum starting size of asteroids in pixels
 const asteroidsVert = 10; //Average number of vertices on each asteroid.
@@ -89,7 +90,13 @@ function newAsteroid(x, y) {
         xy: Math.random() * asteroidsSpeed / FPS * (Math.random() < 0.5 ? 1 : -1),
         r: asteroidSize / 2,
         a: Math.random() * Math.PI * 2, //In radians
-        vert: Math.floor(Math.random() * (asteroidsVert + 1) + asteroidsVert / 2)
+        vert: Math.floor(Math.random() * (asteroidsVert + 1) + asteroidsVert / 2),
+        offsets: []
+    }
+
+    //Create the vertex offsets array
+    for (let i = 0; i < asteroids.vert; i++) {
+        asteroids.offsets.push(Math.random() * asteroidsJagged * 2 + 1 - asteroidsJagged);
     }
     return asteroid;
 }
@@ -151,7 +158,7 @@ function update() {
     //Draw the asteroids
     ctx.strokeStyle = "slategrey";
     ctx.lineWidth = shipSize / 20;
-    let x, y, r, a, vert;
+    let x, y, r, a, vert, offsets;
     for (let i = 0; i < asteroids.length; i++) {
         //Get the properties
         x = asteroids[i].x;
@@ -159,19 +166,20 @@ function update() {
         r = asteroids[i].r;
         a = asteroids[i].a;
         vert = asteroids[i].vert;
+        offsets = asteroids[i].offsets;
 
         //Draw the path
         ctx.beginPath();
         ctx.moveTo(
-            x + r * Math.cos(a),
-            y + r * Math.sin(a)
+            x + r * offsets[0] * Math.cos(a),
+            y + r * offsets[0] * Math.sin(a)
         );
 
         //Draw the polygon
-        for (let j = 0; j < vert; j++) {
+        for (let j = 1; j < vert; j++) {
             ctx.lineTo(
-                x + r * Math.cos(a + j * Math.PI * 2 / vert),
-                y + r * Math.sin(a + j * Math.PI * 2 / vert)
+                x + r * offsets[j] * Math.cos(a + j * Math.PI * 2 / vert),
+                y + r * offsets[j] * Math.sin(a + j * Math.PI * 2 / vert)
             );
         }
         ctx.closePath();
