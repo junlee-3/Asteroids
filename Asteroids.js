@@ -35,10 +35,16 @@ function createAsteroidsBelt() {
     asteroids = [];
     let x, y;
     for (let i = 0; i < asteroidsNumber; i++) {
-        x = Math.floor(Math.random() * canvas.width);
-        y = Math.floor(Math.random() * canvas.height);
+        do {
+            x = Math.floor(Math.random() * canvas.width);
+            y = Math.floor(Math.random() * canvas.height);
+        } while (distanceBetweenPoints(ship.x, ship.y, x, y) < asteroidSize * 2 + ship.r);
         asteroids.push(newAsteroid(x, y));
     }
+}
+
+function distanceBetweenPoints(x1, y1, x2, y2) {
+    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 }
 
 //Key Down Event to move the player
