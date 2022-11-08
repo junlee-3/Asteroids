@@ -190,6 +190,17 @@ function update() {
         asteroids[i].y += asteroids[i].yv;
 
         //Handle edge
+        if (asteroids[i].x < 0 - asteroids[i].r) {
+            asteroids[i].x = canvas.width + asteroids[i].r;
+        } else if (asteroids[i].x > canvas.width + asteroids[i].r) {
+            asteroids[i].x = 0 - asteroids[i].r;
+        }
+
+        if (asteroids[i].y < 0 - asteroids[i].r) {
+            asteroids[i].y = canvas.height + asteroids[i].r;
+        } else if (asteroids[i].y > canvas.height + asteroids[i].r) {
+            asteroids[i].y = 0 - asteroids[i].r;
+        }
     }
 
     //Rotate the ship
