@@ -87,7 +87,7 @@ function newAsteroid(x, y) {
         x: x,
         y: y,
         xv: Math.random() * asteroidsSpeed / FPS * (Math.random() < 0.5 ? 1 : -1),
-        xy: Math.random() * asteroidsSpeed / FPS * (Math.random() < 0.5 ? 1 : -1),
+        yv: Math.random() * asteroidsSpeed / FPS * (Math.random() < 0.5 ? 1 : -1),
         r: asteroidSize / 2,
         a: Math.random() * Math.PI * 2, //In radians
         vert: Math.floor(Math.random() * (asteroidsVert + 1) + asteroidsVert / 2),
@@ -95,8 +95,8 @@ function newAsteroid(x, y) {
     }
 
     //Create the vertex offsets array
-    for (let i = 0; i < asteroids.vert; i++) {
-        asteroids.offsets.push(Math.random() * asteroidsJagged * 2 + 1 - asteroidsJagged);
+    for (let i = 0; i < asteroid.vert; i++) {
+        asteroid.offsets.push(Math.random() * asteroidsJagged * 2 + 1 - asteroidsJagged);
     }
     return asteroid;
 }
@@ -186,6 +186,8 @@ function update() {
         ctx.stroke();
 
         //Move the asteroid
+        asteroids[i].x += asteroids[i].xv;
+        asteroids[i].y += asteroids[i].yv;
 
         //Handle edge
     }
