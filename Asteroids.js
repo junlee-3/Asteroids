@@ -9,7 +9,7 @@ const asteroidsJagged = 0.4; //Jaggedness of the asteroids (= none 1 = lots)
 const asteroidsSpeed = 50; //max start speed of asteroids in pixels per second
 const asteroidSize = 100; //Maximum starting size of asteroids in pixels
 const asteroidsVert = 10; //Average number of vertices on each asteroid.
-const showBounding = true; //Collision bounds for debugging
+const showHitbox = true; //Boolean that will determine if we want to show the hitboxes for debugging
 let ctx = canvas.getContext("2d");
 const ship = { //Create ship object
     x: canvas.width / 2,
@@ -156,7 +156,8 @@ function update() {
     ctx.closePath();
     ctx.stroke();
 
-    if (showBounding) {
+    //Show hitboxes code
+    if (showHitbox) {
         ctx.strokeStyle = "lime";
         ctx.beginPath();
         ctx.arc(ship.x, ship.y, ship.r, 0, Math.PI * 2, false);
@@ -164,10 +165,10 @@ function update() {
     };
 
     //Draw the asteroids
-    ctx.strokeStyle = "slategrey";
     ctx.lineWidth = shipSize / 20;
     let x, y, r, a, vert, offsets;
     for (let i = 0; i < asteroids.length; i++) {
+        ctx.strokeStyle = "slategrey";
         //Get the properties
         x = asteroids[i].x;
         y = asteroids[i].y;
@@ -192,6 +193,13 @@ function update() {
         }
         ctx.closePath();
         ctx.stroke();
+
+        if (showHitbox) {
+            ctx.strokeStyle = "lime";
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2, false);
+            ctx.stroke();
+        };
 
         //Move the asteroid
         asteroids[i].x += asteroids[i].xv;
