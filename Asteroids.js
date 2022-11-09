@@ -49,6 +49,15 @@ function distanceBetweenPoints(x1, y1, x2, y2) {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 }
 
+function explodeShip() {
+    ctx.fillStyle = "lime";
+    ctx.strokeStyle = "lime"
+    ctx.beginPath();
+    ctx.arc(ship.x, ship.y, ship.r, 0, Math.PI * 2, false);
+    ctx.stroke();
+    ctx.fill();
+}
+
 //Key Down Event to move the player
 function keyDown(/** @type {KeyboardEvent} */ ev) {
     switch(ev.keyCode) {
@@ -205,7 +214,7 @@ function update() {
     //Check for asteroid collision
     for (let i = 0; i < asteroids.length; i++) {
         if (distanceBetweenPoints(ship.x, ship.y, asteroids[i].x, asteroids[i].y) < ship.r + asteroids[i].r) {
-            alert("dead")
+            explodeShip();
         }
     }
 
