@@ -9,6 +9,8 @@ const shipBlinkDuration = 0.1; //Duration of the ships blink during invicibility
 const airResistance = 0.7; //Air Resistance or "Friction" or space. 0 = none 1= lots
 const asteroidsNumber = 3; //Starting number of asteroids
 const asteroidsJagged = 0.4; //Jaggedness of the asteroids (= none 1 = lots)
+const laserMax = 10; //Max numbers of lasers on the screen
+const laserSpeed = 500; //Laser speed in pixels per second
 const asteroidsSpeed = 50; //max start speed of asteroids in pixels per second
 const asteroidSize = 100; //Maximum starting size of asteroids in pixels
 const asteroidsVert = 10; //Average number of vertices on each asteroid.
@@ -131,7 +133,7 @@ function update() {
         ship.thrust.y -= shipThrust * Math.sin(ship.angle) / FPS;
 
         //Draw the booster
-        if (!exploding) {
+        if (!exploding && blinkOn) {
             ctx.fillStyle = "red";
             ctx.strokeStyle = "yellow";
             ctx.lineWidth = shipSize / 10;
@@ -266,9 +268,11 @@ function update() {
 
     //Check for asteroid collision
     if (!exploding) {
-        for (let i = 0; i < asteroids.length; i++) {
-            if (distanceBetweenPoints(ship.x, ship.y, asteroids[i].x, asteroids[i].y) < ship.r + asteroids[i].r) {
-                explodeShip();
+        if (ship.blinkNum == 0) {
+            for (let i = 0; i < asteroids.length; i++) {
+                if (distanceBetweenPoints(ship.x, ship.y, asteroids[i].x, asteroids[i].y) < ship.r + asteroids[i].r) {
+                    explodeShip();
+                }
             }
         }
 
