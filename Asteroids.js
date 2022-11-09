@@ -199,23 +199,13 @@ function update() {
             ctx.beginPath();
             ctx.arc(x, y, r, 0, Math.PI * 2, false);
             ctx.stroke();
-        };
-
-        //Move the asteroid
-        asteroids[i].x += asteroids[i].xv;
-        asteroids[i].y += asteroids[i].yv;
-
-        //Handle edge
-        if (asteroids[i].x < 0 - asteroids[i].r) {
-            asteroids[i].x = canvas.width + asteroids[i].r;
-        } else if (asteroids[i].x > canvas.width + asteroids[i].r) {
-            asteroids[i].x = 0 - asteroids[i].r;
         }
+    }
 
-        if (asteroids[i].y < 0 - asteroids[i].r) {
-            asteroids[i].y = canvas.height + asteroids[i].r;
-        } else if (asteroids[i].y > canvas.height + asteroids[i].r) {
-            asteroids[i].y = 0 - asteroids[i].r;
+    //Check for asteroid collision
+    for (let i = 0; i < asteroids.length; i++) {
+        if (distanceBetweenPoints(ship.x, ship.y, asteroids[i].x, asteroids[i].y) < ship.r + asteroids[i].r) {
+            alert("dead")
         }
     }
 
@@ -236,6 +226,26 @@ function update() {
         ship.y = canvas.height + ship.r;
     } else if (ship.y > canvas.height + ship.r) {
         ship.y = 0 - ship.r;
+    }
+
+    //Move the asteroids
+    for (let i = 0; i < asteroids.length; i++) {
+        //Move the asteroid
+        asteroids[i].x += asteroids[i].xv;
+        asteroids[i].y += asteroids[i].yv;
+
+        //Handle edge
+        if (asteroids[i].x < 0 - asteroids[i].r) {
+            asteroids[i].x = canvas.width + asteroids[i].r;
+        } else if (asteroids[i].x > canvas.width + asteroids[i].r) {
+            asteroids[i].x = 0 - asteroids[i].r;
+        }
+
+        if (asteroids[i].y < 0 - asteroids[i].r) {
+            asteroids[i].y = canvas.height + asteroids[i].r;
+        } else if (asteroids[i].y > canvas.height + asteroids[i].r) {
+            asteroids[i].y = 0 - asteroids[i].r;
+        }
     }
 
     //Center dot
