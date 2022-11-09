@@ -4,6 +4,8 @@ const shipSize = 30; //Size of the ship
 const turnRate = 360; //degrees per second
 const shipThrust = 5; //Acceleration in pixels per second
 const shipExplodeDuration = 0.3; //Amount of seconds of the ships explosion
+const shipInvicibility = 3; //Amount of seconds of spawn protection the player recives
+const shipBlinkDuration = 0.1; //Duration of the ships blink during invicibility.
 const airResistance = 0.7; //Air Resistance or "Friction" or space. 0 = none 1= lots
 const asteroidsNumber = 3; //Starting number of asteroids
 const asteroidsJagged = 0.4; //Jaggedness of the asteroids (= none 1 = lots)
@@ -103,6 +105,8 @@ function newShip() {
         y: canvas.height / 2,
         r: shipSize /2,
         angle: 90 / 180 * Math.PI, //convert to radians
+        blinkNum: Math.ceil(shipInvicibility / shipBlinkDuration),
+        blinkTime: Math.ceil(shipBlinkDuration * FPS),
         explodeTime: 0,
         rotation: 0,
         thrusting: false,
@@ -114,6 +118,7 @@ function newShip() {
 }
 
 function update() {
+    let blinkOn = ship.blinkNum % 2 == 0;
     let exploding = ship.explodeTime > 0;
 
     //Draw Background
@@ -154,23 +159,36 @@ function update() {
 
     //Draw the Ship/Player
     if (!exploding) {
-        ctx.strokeStyle = "white";
-        ctx.lineWidth = shipSize / 20;
-        ctx.beginPath();
-        ctx.moveTo( //Nose of the ship
-            ship.x + 4/3 * ship.r * Math.cos(ship.angle),
-            ship.y - 4/3 * ship.r * Math.sin(ship.angle)
-            );
-        ctx.lineTo( //Rear left
-            ship.x - ship.r * (2/3 * Math.cos(ship.angle) + Math.sin(ship.angle)),
-            ship.y + ship.r * (2/3 * Math.sin(ship.angle) - Math.cos(ship.angle))
-            );
-        ctx.lineTo( //Rear right
-            ship.x - ship.r * (2/3 * Math.cos(ship.angle) - Math.sin(ship.angle)),
-            ship.y + ship.r * (2/3 * Math.sin(ship.angle) + Math.cos(ship.angle))
-            );
-        ctx.closePath();
-        ctx.stroke();
+        if (blinkOn) {
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = shipSize / 20;
+            ctx.beginPath();
+            ctx.moveTo( //Nose of the ship
+                ship.x + 4/3 * ship.r * Math.cos(ship.angle),
+                ship.y - 4/3 * ship.r * Math.sin(ship.angle)
+                );
+            ctx.lineTo( //Rear left
+                ship.x - ship.r * (2/3 * Math.cos(ship.angle) + Math.sin(ship.angle)),
+                ship.y + ship.r * (2/3 * Math.sin(ship.angle) - Math.cos(ship.angle))
+                );
+            ctx.lineTo( //Rear right
+                ship.x - ship.r * (2/3 * Math.cos(ship.angle) - Math.sin(ship.angle)),
+                ship.y + ship.r * (2/3 * Math.sin(ship.angle) + Math.cos(ship.angle))
+                );
+            ctx.closePath();
+            ctx.stroke();
+        }
+
+        //Handle blink
+        if (ship.blinkNum > 0) {
+            //Reduce blink time
+            ship.blinkTime--;
+            //Reduce blink number
+            if (ship.blinkTime == 0) {
+                ship.blinkTime = Math.ceil(shipBlinkDuration * FPS);
+                ship.blinkNum--;
+            }
+        }
     } else {
         //Draw the explosion
         ctx.fillStyle = "darkred";
