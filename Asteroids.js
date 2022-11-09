@@ -9,6 +9,7 @@ const asteroidsJagged = 0.4; //Jaggedness of the asteroids (= none 1 = lots)
 const asteroidsSpeed = 50; //max start speed of asteroids in pixels per second
 const asteroidSize = 100; //Maximum starting size of asteroids in pixels
 const asteroidsVert = 10; //Average number of vertices on each asteroid.
+const showBounding = true; //Collision bounds for debugging
 let ctx = canvas.getContext("2d");
 const ship = { //Create ship object
     x: canvas.width / 2,
@@ -154,6 +155,13 @@ function update() {
     );
     ctx.closePath();
     ctx.stroke();
+
+    if (showBounding) {
+        ctx.strokeStyle = "lime";
+        ctx.beginPath();
+        ctx.arc(ship.x, ship.y, ship.r, 0, Math.PI * 2, false);
+        ctx.stroke();
+    };
 
     //Draw the asteroids
     ctx.strokeStyle = "slategrey";
