@@ -122,25 +122,27 @@ function update() {
         ship.thrust.y -= shipThrust * Math.sin(ship.angle) / FPS;
 
         //Draw the booster
-        ctx.fillStyle = "red";
-        ctx.strokeStyle = "yellow";
-        ctx.lineWidth = shipSize / 10;
-        ctx.beginPath();
-        ctx.moveTo( //Rear Left
-            ship.x - ship.r * (2/3 * Math.cos(ship.angle) + 0.5 * Math.sin(ship.angle)),
-            ship.y + ship.r * (2/3 * Math.sin(ship.angle) - 0.5 * Math.cos(ship.angle))
-        );
-        ctx.lineTo( //Rear Center behind the ship
-            ship.x - ship.r * 6/3 * Math.cos(ship.angle),
-            ship.y + ship.r * 6/3 * Math.sin(ship.angle)
-        );
-        ctx.lineTo( //Rear right
-            ship.x - ship.r * (2/3 * Math.cos(ship.angle) - 0.5 * Math.sin(ship.angle)),
-            ship.y + ship.r * (2/3 * Math.sin(ship.angle) + 0.5 * Math.cos(ship.angle))
-        );
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
+        if (!exploding) {
+            ctx.fillStyle = "red";
+            ctx.strokeStyle = "yellow";
+            ctx.lineWidth = shipSize / 10;
+            ctx.beginPath();
+            ctx.moveTo( //Rear Left
+                ship.x - ship.r * (2/3 * Math.cos(ship.angle) + 0.5 * Math.sin(ship.angle)),
+                ship.y + ship.r * (2/3 * Math.sin(ship.angle) - 0.5 * Math.cos(ship.angle))
+                );
+            ctx.lineTo( //Rear Center behind the ship
+                ship.x - ship.r * 6/3 * Math.cos(ship.angle),
+                ship.y + ship.r * 6/3 * Math.sin(ship.angle)
+                );
+            ctx.lineTo( //Rear right
+                ship.x - ship.r * (2/3 * Math.cos(ship.angle) - 0.5 * Math.sin(ship.angle)),
+                ship.y + ship.r * (2/3 * Math.sin(ship.angle) + 0.5 * Math.cos(ship.angle))
+                );
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        }
     } else {
         ship.thrust.x -= airResistance * ship.thrust.x / FPS;
         ship.thrust.y -= airResistance * ship.thrust.y / FPS;
@@ -167,28 +169,29 @@ function update() {
         ctx.stroke();
     } else {
         //Draw the explosion
+        ctx.fillStyle = "darkred";
+        ctx.beginPath();
+        ctx.arc(ship.x, ship.y, ship.r * 1.7, 0, Math.PI * 2, false);
+        ctx.fill();
+
         ctx.fillStyle = "red";
         ctx.beginPath();
-        ctx.arc(ship.x, ship.y, ship.r * 1.5, 0, Math.PI * 2, false);
-        ctx.stroke();
+        ctx.arc(ship.x, ship.y, ship.r * 1.4, 0, Math.PI * 2, false);
         ctx.fill();
 
         ctx.fillStyle = "orange";
         ctx.beginPath();
-        ctx.arc(ship.x, ship.y, ship.r * 1.2, 0, Math.PI * 2, false);
-        ctx.stroke();
+        ctx.arc(ship.x, ship.y, ship.r * 1.1, 0, Math.PI * 2, false);
         ctx.fill();
 
         ctx.fillStyle = "yellow";
         ctx.beginPath();
-        ctx.arc(ship.x, ship.y, ship.r * 0.9, 0, Math.PI * 2, false);
-        ctx.stroke();
+        ctx.arc(ship.x, ship.y, ship.r * 0.8, 0, Math.PI * 2, false);
         ctx.fill();
 
         ctx.fillStyle = "white";
         ctx.beginPath();
-        ctx.arc(ship.x, ship.y, ship.r * 0.6, 0, Math.PI * 2, false);
-        ctx.stroke();
+        ctx.arc(ship.x, ship.y, ship.r * 0.5, 0, Math.PI * 2, false);
         ctx.fill();
 
     }
@@ -240,19 +243,21 @@ function update() {
     }
 
     //Check for asteroid collision
-    for (let i = 0; i < asteroids.length; i++) {
-        if (distanceBetweenPoints(ship.x, ship.y, asteroids[i].x, asteroids[i].y) < ship.r + asteroids[i].r) {
-            explodeShip();
+    if (!exploding) {
+        for (let i = 0; i < asteroids.length; i++) {
+            if (distanceBetweenPoints(ship.x, ship.y, asteroids[i].x, asteroids[i].y) < ship.r + asteroids[i].r) {
+                explodeShip();
+            }
         }
+
+        //Rotate the ship
+        ship.angle += ship.rotation;
+
+        //Move the ship
+        ship.x += ship.thrust.x;
+        ship.y += ship.thrust.y;
     }
-
-    //Rotate the ship
-    ship.angle += ship.rotation;
-
-    //Move the ship
-    ship.x += ship.thrust.x;
-    ship.y += ship.thrust.y;
-
+    
     //Handle edge of screen
     if (ship.x < 0 - ship.r) {
         ship.x = canvas.width + ship.r;
