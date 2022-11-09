@@ -12,19 +12,7 @@ const asteroidSize = 100; //Maximum starting size of asteroids in pixels
 const asteroidsVert = 10; //Average number of vertices on each asteroid.
 const showHitbox = false; //Boolean that will determine if we want to show the hitboxes for debugging
 let ctx = canvas.getContext("2d");
-const ship = { //Create ship object
-    x: canvas.width / 2,
-    y: canvas.height / 2,
-    r: shipSize /2,
-    angle: 90 / 180 * Math.PI, //convert to radians
-    explodeTime: 0,
-    rotation: 0,
-    thrusting: false,
-    thrust: {
-        x: 0,
-        y: 0
-    }
-}
+let ship = newShip();
 let asteroids = []; //Create asteroids array
 createAsteroidsBelt();
 
@@ -107,6 +95,22 @@ function newAsteroid(x, y) {
         asteroid.offsets.push(Math.random() * asteroidsJagged * 2 + 1 - asteroidsJagged);
     }
     return asteroid;
+}
+
+function newShip() {
+    return { //Create ship object
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        r: shipSize /2,
+        angle: 90 / 180 * Math.PI, //convert to radians
+        explodeTime: 0,
+        rotation: 0,
+        thrusting: false,
+        thrust: {
+            x: 0,
+            y: 0
+        }
+    }
 }
 
 function update() {
@@ -256,8 +260,14 @@ function update() {
         //Move the ship
         ship.x += ship.thrust.x;
         ship.y += ship.thrust.y;
+    } else {
+        ship.explodeTime--;
+
+        if (ship.explodeTime == 0) {
+            ship = newShip();
+        }
     }
-    
+
     //Handle edge of screen
     if (ship.x < 0 - ship.r) {
         ship.x = canvas.width + ship.r;
