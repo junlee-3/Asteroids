@@ -3,19 +3,21 @@ const FPS = 60; //How many frames per second the game runs in
 const shipSize = 30; //Size of the ship
 const turnRate = 360; //degrees per second
 const shipThrust = 5; //Acceleration in pixels per second
+const shipExplodeDuration = 0.3; //Amount of seconds of the ships explosion
 const airResistance = 0.7; //Air Resistance or "Friction" or space. 0 = none 1= lots
 const asteroidsNumber = 3; //Starting number of asteroids
 const asteroidsJagged = 0.4; //Jaggedness of the asteroids (= none 1 = lots)
 const asteroidsSpeed = 50; //max start speed of asteroids in pixels per second
 const asteroidSize = 100; //Maximum starting size of asteroids in pixels
 const asteroidsVert = 10; //Average number of vertices on each asteroid.
-const showHitbox = true; //Boolean that will determine if we want to show the hitboxes for debugging
+const showHitbox = false; //Boolean that will determine if we want to show the hitboxes for debugging
 let ctx = canvas.getContext("2d");
 const ship = { //Create ship object
     x: canvas.width / 2,
     y: canvas.height / 2,
     r: shipSize /2,
     angle: 90 / 180 * Math.PI, //convert to radians
+    explodeTime: 0,
     rotation: 0,
     thrusting: false,
     thrust: {
@@ -50,12 +52,8 @@ function distanceBetweenPoints(x1, y1, x2, y2) {
 }
 
 function explodeShip() {
-    ctx.fillStyle = "lime";
-    ctx.strokeStyle = "lime"
-    ctx.beginPath();
-    ctx.arc(ship.x, ship.y, ship.r, 0, Math.PI * 2, false);
-    ctx.stroke();
-    ctx.fill();
+    ship.explodeTime = Math.ceil(shipExplodeDuration * FPS);
+
 }
 
 //Key Down Event to move the player
@@ -112,6 +110,8 @@ function newAsteroid(x, y) {
 }
 
 function update() {
+    let exploding = ship.explodeTime > 0;
+
     //Draw Background
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -147,23 +147,51 @@ function update() {
     }
 
     //Draw the Ship/Player
-    ctx.strokeStyle = "white";
-    ctx.lineWidth = shipSize / 20;
-    ctx.beginPath();
-    ctx.moveTo( //Nose of the ship
-        ship.x + 4/3 * ship.r * Math.cos(ship.angle),
-        ship.y - 4/3 * ship.r * Math.sin(ship.angle)
-    );
-    ctx.lineTo( //Rear left
-        ship.x - ship.r * (2/3 * Math.cos(ship.angle) + Math.sin(ship.angle)),
-        ship.y + ship.r * (2/3 * Math.sin(ship.angle) - Math.cos(ship.angle))
-    );
-    ctx.lineTo( //Rear right
-        ship.x - ship.r * (2/3 * Math.cos(ship.angle) - Math.sin(ship.angle)),
-        ship.y + ship.r * (2/3 * Math.sin(ship.angle) + Math.cos(ship.angle))
-    );
-    ctx.closePath();
-    ctx.stroke();
+    if (!exploding) {
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = shipSize / 20;
+        ctx.beginPath();
+        ctx.moveTo( //Nose of the ship
+            ship.x + 4/3 * ship.r * Math.cos(ship.angle),
+            ship.y - 4/3 * ship.r * Math.sin(ship.angle)
+            );
+        ctx.lineTo( //Rear left
+            ship.x - ship.r * (2/3 * Math.cos(ship.angle) + Math.sin(ship.angle)),
+            ship.y + ship.r * (2/3 * Math.sin(ship.angle) - Math.cos(ship.angle))
+            );
+        ctx.lineTo( //Rear right
+            ship.x - ship.r * (2/3 * Math.cos(ship.angle) - Math.sin(ship.angle)),
+            ship.y + ship.r * (2/3 * Math.sin(ship.angle) + Math.cos(ship.angle))
+            );
+        ctx.closePath();
+        ctx.stroke();
+    } else {
+        //Draw the explosion
+        ctx.fillStyle = "red";
+        ctx.beginPath();
+        ctx.arc(ship.x, ship.y, ship.r * 1.5, 0, Math.PI * 2, false);
+        ctx.stroke();
+        ctx.fill();
+
+        ctx.fillStyle = "orange";
+        ctx.beginPath();
+        ctx.arc(ship.x, ship.y, ship.r * 1.2, 0, Math.PI * 2, false);
+        ctx.stroke();
+        ctx.fill();
+
+        ctx.fillStyle = "yellow";
+        ctx.beginPath();
+        ctx.arc(ship.x, ship.y, ship.r * 0.9, 0, Math.PI * 2, false);
+        ctx.stroke();
+        ctx.fill();
+
+        ctx.fillStyle = "white";
+        ctx.beginPath();
+        ctx.arc(ship.x, ship.y, ship.r * 0.6, 0, Math.PI * 2, false);
+        ctx.stroke();
+        ctx.fill();
+
+    }
 
     //Show hitboxes code
     if (showHitbox) {
